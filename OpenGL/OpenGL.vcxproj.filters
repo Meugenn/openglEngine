@@ -27,6 +27,12 @@
     <ClCompile Include="Drawing.cpp">
       <Filter>Исходные файлы</Filter>
     </ClCompile>
+<<<<<<< Updated upstream
+=======
+    <ClCompile Include="Matrix.cpp">
+      <Filter>Файлы заголовков</Filter>
+    </ClCompile>
+>>>>>>> Stashed changes
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="includes\custom\Shader.h">

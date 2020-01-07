@@ -117,7 +117,6 @@ int InitApp(std::vector<float> vertices, std::vector<unsigned int> indices)
 		ourShader.use();
 
 		glBindVertexArray(VAO);
-
 		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
 
 

@@ -15,10 +15,10 @@ int main() {
 
 	const float startZ = 1.0f;
 
-	dd.AddVertice(glm::vec4({ -0.5f, -0.5f, startZ, 1.0f }), Color({ 1.0f, 0.0f, 0.0f }), glm::vec2({0, 0}));
-	dd.AddVertice(glm::vec4({ -0.5f,  0.0f, startZ, 1.0f }), Color({ 0.0f, 1.0f, 0.0f }), glm::vec2({ 0, 1 }));
-	dd.AddVertice(glm::vec4({ 0.0f, -0.5f, startZ, 1.0f }), Color({ 0.0f, 0.0f, 1.0f }), glm::vec2({ 1, 0 }));
-	dd.AddVertice(glm::vec4({ 0.0f, 0.0f, startZ, 1.0f }), Color({1.0f, 1.0f, 1.0f}), glm::vec2({ 1, 1 }));
+	dd.AddVertice(glm::vec4({ -0.5f, -0.5f, startZ, 1.0f }), Color({ 1.0f, 1.0f, 1.0f }), glm::vec2({0, 1})); // bottom left
+	dd.AddVertice(glm::vec4({ -0.5f,  0.5f, startZ, 1.0f }), Color({ 1.0f, 1.0f, 1.0f }), glm::vec2({ 0, 0 })); //top left
+	dd.AddVertice(glm::vec4({ 0.5f, -0.5f, startZ, 1.0f }), Color({ 1.0f, 1.0f, 1.0f }), glm::vec2({ 1, 1 })); //bottom right
+	dd.AddVertice(glm::vec4({ 0.5f, 0.5f, startZ, 1.0f }), Color({ 1.0f, 1.0f, 1.0f }), glm::vec2({ 1, 0 })); //top right
 	
 
 	std::vector<unsigned int> indices = {
