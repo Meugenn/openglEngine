@@ -138,10 +138,12 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="Base.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="Matrix.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Drawing.h" />
     <ClInclude Include="includes\custom\Shader.h" />
+    <ClInclude Include="Matrix.h" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="VertexShader.vs">

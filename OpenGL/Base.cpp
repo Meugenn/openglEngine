@@ -1,3 +1,4 @@
+#define _USE_MATH_DEFINES
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
@@ -5,19 +6,23 @@
 #include <vector>
 
 #include <iostream>
+#include "Matrix.h"
+#include <cmath>
+using std::cos;
+using std::sin;
 
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
 void processInput(GLFWwindow* window);
-
 
 // settings
 const unsigned int SCR_WIDTH = 800;
 const unsigned int SCR_HEIGHT = 600;
 
-int InitApp(std::vector<float> vertices, std::vector<float> vertices_lines)
+int InitApp(std::vector<float> vertices, std::vector<int> indices)
 {
 	// glfw: initialize and configure
 	// ------------------------------
+	std::cout << "Starting GLFW context, OpenGL 3.3" << std::endl;
 	glfwInit();
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
@@ -30,6 +35,7 @@ int InitApp(std::vector<float> vertices, std::vector<float> vertices_lines)
 	// glfw window creation
 	// --------------------
 	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+
 	if (window == NULL)
 	{
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -37,6 +43,9 @@ int InitApp(std::vector<float> vertices, std::vector<float> vertices_lines)
 		return -1;
 	}
 	glfwMakeContextCurrent(window);
+
+
+
 	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
 
 	// glad: load all OpenGL function pointers
@@ -53,52 +62,47 @@ int InitApp(std::vector<float> vertices, std::vector<float> vertices_lines)
 
 	// set up vertex data (and buffer(s)) and configure vertex attributes
 	// ------------------------------------------------------------------
-	
 
-
-
-	unsigned int VBO, VAO, VAO_LINES, VBO_LINES;
+	unsigned int VBO, VAO, EBO;
 	glGenVertexArrays(1, &VAO);
 	glGenBuffers(1, &VBO);
+	glGenBuffers(1, &EBO);
 	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
 	glBindVertexArray(VAO);
 
 	glBindBuffer(GL_ARRAY_BUFFER, VBO);
 	glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 
-	// position attribute
-	glVertexAttribPointer(0, 4, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	// color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(4 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(int) * indices.size(), indices.data(), GL_STATIC_DRAW);
 
-	glGenVertexArrays(1, &VAO_LINES);
-	glGenBuffers(1, &VBO_LINES);
-	// bind the Vertex Array Object first, then bind and set vertex buffer(s), and then configure vertex attributes(s).
-	glBindVertexArray(VAO_LINES);
-
-	glBindBuffer(GL_ARRAY_BUFFER, VBO_LINES);
-	glBufferData(GL_ARRAY_BUFFER, vertices_lines.size() * sizeof(float), vertices_lines.data(), GL_STATIC_DRAW);
 
 	// position attribute
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)0);
+	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
 	glEnableVertexAttribArray(0);
+	/*
+	glBindBuffer(GL_ARRAY_BUFFER, 0);
+	glBindVertexArray(0);
+	*/
 	// color attribute
-	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(float), (void*)(3 * sizeof(float)));
+/*	glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(4 * sizeof(float)));
 	glEnableVertexAttribArray(1);
-
-	// You can unbind the VAO afterwards so other VAO calls won't accidentally modify this VAO, but this rarely happens. Modifying other
-	// VAOs requires a call to glBindVertexArray anyways so we generally don't unbind VAOs (nor VBOs) when it's not directly necessary.
-	// glBindVertexArray(0);
-
-	int nrAttributes;
-	glGetIntegerv(GL_MAX_VERTEX_ATTRIBS, &nrAttributes);
-	std::cout << "Maximum nr of vertex attributes supported: " << nrAttributes << std::endl;
+	*/
 	// render loop
 	// -----------
 	while (!glfwWindowShouldClose(window))
 	{
+		for (int i = 0; i < 4 * 3; i += 3) {
+			float x = 0.3, y = 0 ;
+			std::vector<float> point = { vertices[i]-x, vertices[i + 1]-y, vertices[i + 2] };
+			//std::cout << i << ' ' << vertices.size() << '\n';
+			point = Matrix(1, { M_PI / 30 }) * point;
+			vertices[i] = point[0]+x;
+			vertices[i + 1] = point[1]+y;
+			vertices[i + 2] = point[2];
+		}
+		//glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
 		// input
 		// -----
 		processInput(window);
@@ -110,15 +114,17 @@ int InitApp(std::vector<float> vertices, std::vector<float> vertices_lines)
 		glClear(GL_COLOR_BUFFER_BIT);
 
 		// render the triangle
+		/*glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(float), vertices.data(), GL_STATIC_DRAW);
+		*/
+		glBindBuffer(GL_ARRAY_BUFFER, VBO);
 		ourShader.use();
 		glBindVertexArray(VAO);
-		glDrawArrays(GL_LINES, 0, vertices.size() * 3);
-
-		glBindVertexArray(VAO_LINES);
-		glDrawArrays(GL_LINES, 0, vertices_lines.size() * 3);
-
+		glDrawElements(GL_TRIANGLES, indices.size(), GL_UNSIGNED_INT, 0);
+		//glBindVertexArray(0);
 		// glfw: swap buffers and poll IO events (keys pressed/released, mouse moved etc.)
 		// -------------------------------------------------------------------------------
+
 		glfwSwapBuffers(window);
 		glfwPollEvents();
 	}
@@ -127,6 +133,7 @@ int InitApp(std::vector<float> vertices, std::vector<float> vertices_lines)
 	// ------------------------------------------------------------------------
 	glDeleteVertexArrays(1, &VAO);
 	glDeleteBuffers(1, &VBO);
+	glDeleteBuffers(1, &EBO);
 
 	// glfw: terminate, clearing all previously allocated GLFW resources.
 	// ------------------------------------------------------------------
@@ -148,5 +155,5 @@ void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
 	// make sure the viewport matches the new window dimensions; note that width and 
 	// height will be significantly larger than specified on retina displays.
-	glViewport(0, 0, width, height);
+	glViewport(0, 0, width, height); 
 }

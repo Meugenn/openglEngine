@@ -7,5 +7,5 @@ out vec3 ourColor; // output a color to the fragment shader
 void main()
 {
 	gl_Position = aPos;
-	ourColor = aColor; // set ourColor to the input color we got from the vertex data
+	ourColor = vec3(0,0.7, 0.5); // set ourColor to the input color we got from the vertex data
 }
