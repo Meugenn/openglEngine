@@ -143,6 +143,7 @@
   <ItemGroup>
     <ClInclude Include="Drawing.h" />
     <ClInclude Include="includes\custom\Shader.h" />
+    <ClInclude Include="includes\stb_image.h" />
     <ClInclude Include="Matrix.h" />
   </ItemGroup>
   <ItemGroup>
